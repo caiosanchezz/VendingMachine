@@ -154,8 +154,7 @@ void exibirProdutos() {
     cout << "\nVerifique a disponibilidade do item e informe novamente a quantidade desejada: ";
     cin >> quantidade;
   }
-  
-  operacaoPagamento(codigo, quantidade);
+
   
 }
 
