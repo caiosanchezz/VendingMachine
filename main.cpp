@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h> //do exit()
-#include <stdlib.h>// do sleep()
+#include <stdio.h>
+#include <locale.h>
 
 using namespace std;
     
@@ -18,7 +19,7 @@ produto estoque[5];
 void menuPrincipal();
 void gerarEstoque();
 void exibirProdutos();
-void operacaoPagamento();
+void operacaoPagamento(int codigo, int quantidade);
 
 
 int main() {
@@ -30,6 +31,7 @@ int main() {
 }
 
 void menuPrincipal() {
+
   string opcao;
 
   cout << "\n         Vending Machine             ";
@@ -120,7 +122,7 @@ void gerarEstoque() {
 void exibirProdutos() {
   
   system("clear||cls"); 
-  int codigo, quantidade;
+  int indice, quantidade;
   
   cout << "\n            PRODUTOS             ";
   cout << "\n=================================" << endl;
@@ -133,28 +135,29 @@ void exibirProdutos() {
   }
 
   cout << "Insira o código do produto desejado: ";
-  cin >> codigo;
+  cin >> indice;
 
-  while ((codigo != 1) && (codigo != 2) && (codigo != 3) && (codigo != 4) && (codigo != 5)) {
+  while ((indice != 1) && (indice != 2) && (indice != 3) && (indice != 4) && (indice != 5)) {
     cout << "Operação inválida!!" << endl;
     cout << "O código inserido não corresponde a nenhum dos itens" << endl;
     cout << "Por favor, confira os produtos e insira o código novamente: ";
-    cin >> codigo;
+    cin >> indice;
   }
 
-  codigo = codigo - 1; // Tratameto do código pra eu não fazer confusão depois :))
+  indice = indice - 1; // Tratameto do código pra eu não fazer confusão depois :))
   
-  cout << "\nItem selecionado: " << estoque[codigo].nome << endl;
-  cout << "O item tem " << estoque[codigo].quantidade << " unidades disponíveis" << endl;
+  cout << "\nItem selecionado: " << estoque[indice].nome << endl;
+  cout << "O item tem " << estoque[indice].quantidade << " unidades disponíveis" << endl;
   cout << "Insira a quantidade desejada: ";
   cin >> quantidade;
 
-  if (quantidade > estoque[codigo].quantidade) {
+  while (quantidade > estoque[indice].quantidade) {
     cout << "\nQuantidade acima do estoque disponível!!";
     cout << "\nVerifique a disponibilidade do item e informe novamente a quantidade desejada: ";
     cin >> quantidade;
   }
 
+  operacaoPagamento(indice, quantidade);
   
 }
 
@@ -162,7 +165,7 @@ void operacaoPagamento(int codigo, int quantidade) {
 
   system("clear||cls"); 
 
-  int valorTotal = estoque[codigo].preco * quantidade;
+  double valorTotal = estoque[codigo].preco * quantidade;
   int metodoPagamento;
 
   cout << "\nItem Selecionado: " << estoque[codigo].nome;
@@ -178,13 +181,13 @@ void operacaoPagamento(int codigo, int quantidade) {
 
   while ((metodoPagamento != 1) && (metodoPagamento != 2) && (metodoPagamento != 3)) {
     cout << "\nAtenção, o método escolhido não se enquadra nas opções disponíveis!!";
-    cout << "\nPor favor, verifique e escolha novamente o método de pagamento: ";
+    cout << "\nPor favor, verifique e escolha novamente o método de pagamento: " << endl;
     cin >> metodoPagamento;
   }
 
   switch (metodoPagamento) {
     
-    case 1: // Dinheiro
+    case 1: // Dinheiro ======================================================================================
       
       int valorInserido, adicionalInserido, troco;
 
@@ -203,13 +206,14 @@ void operacaoPagamento(int codigo, int quantidade) {
 
       cout << "\nMuito obrigado :)"; 
     
-    case 2: // Cartão
+    case 2: // Cartão ==========================================================================================
 
-      int opcaoCartao, senhaCartao;
+      int opcaoCartao;
 
       cout << "\nPor favor, aperte: ";
       cout << "\n (1) - Débito ";
       cout << "\n (2) - Crédito";
+      cin >> opcaoCartao;
 
       while ((opcaoCartao != 1) && (opcaoCartao != 2)) {
         cout << "Caraio viu";
@@ -219,7 +223,7 @@ void operacaoPagamento(int codigo, int quantidade) {
 
       cout << "\nAproxime o cartão da tela :)";
 
-    case 3: // QR CODE 
+    case 3: // QR CODE ==========================================================================================
       cout << "\nGerando QR Code...";
       cout << "\n ▥ ▥▥▥ ▥";
       cout << "\n ▥ ▥ ▥▥▥";
