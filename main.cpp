@@ -2,13 +2,15 @@
 #include <stdlib.h> //do exit()
 #include <stdio.h>
 #include <locale.h>
+#include <cmath>
+#include <iomanip>      // setprecision
 
 using namespace std;
     
 typedef struct {
   int codigo;
   string nome;
-  double preco;
+  float preco;
   int quantidade;
   int totalVendido;
 } produto;
@@ -20,7 +22,9 @@ void menuPrincipal();
 void gerarEstoque();
 void exibirProdutos();
 void operacaoPagamento(int codigo, int quantidade);
-
+void painelAdministrador();
+void editarEstoque();
+void gerarInventario();
 
 int main() {
 
@@ -32,14 +36,16 @@ int main() {
 
 void menuPrincipal() {
 
+  system("clear||cls");
+
   string opcao;
 
   cout << "\n         Vending Machine             ";
   cout << "\n=====================================";
-  cout << "\n Como deseja acessar?\n";
-  cout << "\n (U) - Modo Usuário";
-  cout << "\n (A) - Modo Administrador";
-  cout << "\n (S) - Sair\n ";
+  cout << "\nComo deseja acessar?\n";
+  cout << "\n [U] - Modo Usuário";
+  cout << "\n [A] - Modo Administrador";
+  cout << "\n [S] - Sair\n ";
 
   cin >> opcao;
   
@@ -68,8 +74,8 @@ void menuPrincipal() {
 
     string senha;
     
-    cout << "          Administrador        ";
-    cout << "\n===============================";
+    cout << "          ADMINISTRADOR        ";
+    cout << "\n================================================";
     cout << "\nPara acessar a interface de administração,\nfavor insira a senha: ";
     cin >> senha;
 
@@ -78,7 +84,7 @@ void menuPrincipal() {
       cin >> senha;
     }
 
-    cout << "Acesso liberado!";
+    painelAdministrador();
     
   }
 }
@@ -106,7 +112,7 @@ void gerarEstoque() {
 
   estoque[3].codigo = 3;
   estoque[3].nome = "Água";
-  estoque[3].preco = 5.00;
+  estoque[3].preco = 5.90;
   estoque[3].quantidade = 25;
   estoque[3].totalVendido = 0;
 
@@ -125,12 +131,13 @@ void exibirProdutos() {
   int indice, quantidade;
   
   cout << "\n            PRODUTOS             ";
-  cout << "\n=================================" << endl;
+  cout << "\n=============================================" << endl;
     
   for (int i = 0; i < 5; i++) {
-    cout << "Código: " << i + 1 << endl; 
-    cout << "Item: " << estoque[i].nome << endl;
-    cout << "R$ " << estoque[i].preco << endl << endl;
+    cout << "\nCódigo: " << i + 1; 
+    cout << "\nItem: " << estoque[i].nome;
+    cout << "\nR$ " <<  setprecision(3) << estoque[i].preco;
+    cout << "\n---------------------------------------------" << endl;
     
   }
 
@@ -165,18 +172,22 @@ void operacaoPagamento(int codigo, int quantidade) {
 
   system("clear||cls"); 
 
-  double valorTotal = estoque[codigo].preco * quantidade;
-  int metodoPagamento;
+  cout << "\n            PAGAMENTO              ";
+  cout << "\n=================================================" << endl;  
 
+  float valorTotal = estoque[codigo].preco * quantidade;
+  int metodoPagamento, verificacao;
+
+  // Informações sobre o item e valor a ser pago
   cout << "\nItem Selecionado: " << estoque[codigo].nome;
   cout << "\nQuantidade: " << quantidade;
-  cout << "\nValor Unitário: " << estoque[codigo].preco;
-  cout << "\nTotal a pagar: " << valorTotal << endl;
+  cout << "\nValor Unitário: " <<  setprecision(3) << estoque[codigo].preco;
+  cout << "\nTotal a pagar: " <<  setprecision(3) << valorTotal << endl;
 
   cout << "\nPor favor, informe o método de pagamento: ";
   cout << "\n (1) - Dinheiro";
   cout << "\n (2) - Cartão";
-  cout << "\n (3) - PIX / QR Code";
+  cout << "\n (3) - PIX / QR Code" << endl;
   cin >> metodoPagamento;
 
   while ((metodoPagamento != 1) && (metodoPagamento != 2) && (metodoPagamento != 3)) {
@@ -185,52 +196,157 @@ void operacaoPagamento(int codigo, int quantidade) {
     cin >> metodoPagamento;
   }
 
-  switch (metodoPagamento) {
-    
-    case 1: // Dinheiro ======================================================================================
-      
-      int valorInserido, adicionalInserido, troco;
+  if (metodoPagamento == 1) { // Dinheiro ======================================================================================
 
-      cout << "\nInsira o dinheiro:"; // Mudar isso aqui depois pq tá feio
+    int valorInserido, adicionalInserido, troco;
 
-      while (valorInserido < valorTotal) {
-        cout << "\nQuantia insuficiente, favor insira mais dinheiro kkkk"; // Arrumar depois
-        cin >> adicionalInserido;
-        valorInserido += adicionalInserido;
-      }
+    cout << "\nInsira o dinheiro: "; // Mudar isso aqui depois pq tá feio
+    cin >> valorInserido;
 
-      troco = valorInserido - valorTotal;
+    while (valorInserido < valorTotal)
+    {
+      cout << "\nQuantia insuficiente, favor insira mais dinheiro: "; // Arrumar depois
+      cin >> adicionalInserido;
+      valorInserido += adicionalInserido;
+    }
 
-      cout << "\nTotal inserido: " << valorInserido;
-      cout << "\nTroco : " << troco;
+    troco = valorInserido - valorTotal;
 
-      cout << "\nMuito obrigado :)"; 
-    
-    case 2: // Cartão ==========================================================================================
+    cout << "\nTotal inserido: " << valorInserido;
+    cout << "\nTroco : " <<  setprecision(3) << troco;
 
-      int opcaoCartao;
+    cout << "\nMuito obrigado :)" << endl;
+  }
 
-      cout << "\nPor favor, aperte: ";
-      cout << "\n (1) - Débito ";
-      cout << "\n (2) - Crédito";
+  if (metodoPagamento == 2) { // Cartão ==========================================================================================
+
+    int opcaoCartao;
+
+    cout << "\nPor favor, aperte: ";
+    cout << "\n (1) - Débito ";
+    cout << "\n (2) - Crédito" << endl;
+    cin >> opcaoCartao;
+
+    while ((opcaoCartao != 1) && (opcaoCartao != 2)) {
+      cout << "Caraio viu";
       cin >> opcaoCartao;
+    }
 
-      while ((opcaoCartao != 1) && (opcaoCartao != 2)) {
-        cout << "Caraio viu";
-        cin >> opcaoCartao;
-      }
-      
+    cout << "\nAproxime o cartão da tela :)";
+    cout << "\nMuito Obrigado :)" << endl;
+  }
 
-      cout << "\nAproxime o cartão da tela :)";
+  if (metodoPagamento == 3) { // QR CODE ==========================================================================================
+    cout << "\nGerando QR Code...";
+    cout << "\n ▥ ▥▥▥ ▥";
+    cout << "\n ▥ ▥ ▥▥▥";
+    cout << "\n ▥▥▥▥▥ ▥";
+    cout << "\n ▥▥ ▥▥ ▥";
 
-    case 3: // QR CODE ==========================================================================================
-      cout << "\nGerando QR Code...";
-      cout << "\n ▥ ▥▥▥ ▥";
-      cout << "\n ▥ ▥ ▥▥▥";
-      cout << "\n ▥▥▥▥▥ ▥";
-      cout << "\n ▥▥ ▥▥ ▥";
+    cout << "\nPagamento concluído!";
+    cout << "\nMuito Obrigado :)" << endl;
+  }
+
+  estoque[codigo].quantidade -= quantidade; // Tira do estoque
+  estoque[codigo].totalVendido =+ valorTotal; // Armazena o valor total da compra pra fins de faturamento
+
+  // Verificar se o usuário deseja continuar utilizando a máquina
+  cout << "\nPara retornar ao menu inicial, pressione '1'";
+  cout << "\nPara sair, pressione qualquer tecla...";
+  cin >> verificacao;
+
+  if (verificacao == 1) {
+    menuPrincipal();
+  }
+  else {
+    system("exit");
+  }
+
+
+}
+
+void painelAdministrador() {
+
+  system("clear||cls");
+
+  int opcaoMenuADM;
+
+  cout << "\n     PAINEL DE CONTROLE - ADMINISTRADOR          ";
+  cout << "\n===================================================\n";
+
+  cout << "\n [1] - Alteração/Manutenção de estoque";
+  cout << "\n [2] - Inventário de estoque";
+  cout << "\n [3] - Relatório de Faturamento\n";
+  cout << "\n [4] - <<== Voltar ao menu inicial\n";
+  cin >> opcaoMenuADM;
+
+  while ((opcaoMenuADM != 1) && (opcaoMenuADM != 2) && (opcaoMenuADM != 3) && (opcaoMenuADM != 4)) {
+    cout << "\nOpção inválida!!";
+    cout << "\nPor favor, verifique e escolha novamente: " << endl;
+    cin >> opcaoMenuADM;
+  }
+
+  if (opcaoMenuADM == 4) {
+    menuPrincipal();
+  }
+  else {
+
+    if (opcaoMenuADM == 1) {
+      editarEstoque();
+    }
+    
+    if (opcaoMenuADM == 2) {
+      gerarInventario();
+    }
+
+    if (opcaoMenuADM == 1) {
+      editarEstoque();
+    }
 
   }
 
+}
+
+void editarEstoque(){
+
+  system("clear||cls");
+
+  int opcaoEstoque, codigo;
+
+  cout << "\n     PAINEL DE CONTROLE - ESTOQUE          ";
+  cout << "\n===================================================\n";
+
+  for (int i = 0; i < 5; i++) {
+    cout << "\nCódigo: " << i + 1; 
+    cout << "\nItem: " << estoque[i].nome;
+    cout << "\n---------------------------------------------" << endl;
+    
+  }
+
+  cout << "\nInforme o código do produto a ser alterado: ";
+  cin >> codigo;
+
+  codigo = codigo - 1;
+
+}
+
+void gerarInventario () {
+
+  system("clear||cls");
+
+  int verificacao;
+
+  for (int i = 0; i < 5; i++) {
+    cout << "\nCódigo: " << i + 1; 
+    cout << "\nItem: " << estoque[i].nome;
+    cout << "\nQuantidade em estoque: " << estoque[i].quantidade;
+    cout << "\n---------------------------------------------" << endl;
+    
+  }
+
+  cout << "\n\nPara voltar ao painel de controle, aperte [1] ";
+  cin >> verificacao;
+
+  painelAdministrador();
 
 }
