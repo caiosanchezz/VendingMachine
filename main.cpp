@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <locale.h>
 #include <cmath>
-#include <iomanip>      // setprecision
+#include <iomanip>  // setprecision
+
 
 using namespace std;
     
@@ -25,6 +26,8 @@ void operacaoPagamento(int codigo, int quantidade);
 void painelAdministrador();
 void editarEstoque();
 void gerarInventario();
+void gerarFaturamento();
+void efetuarAlteracao(int codigoProduto, int itemAlteracao);
 
 int main() {
 
@@ -38,38 +41,35 @@ void menuPrincipal() {
 
   system("clear||cls");
 
-  string opcao;
+  int opcao;
 
   cout << "\n         Vending Machine             ";
   cout << "\n=====================================";
   cout << "\nComo deseja acessar?\n";
-  cout << "\n [U] - Modo Usuário";
-  cout << "\n [A] - Modo Administrador";
-  cout << "\n [S] - Sair\n ";
+  cout << "\n [1] - Modo Usuário";
+  cout << "\n [2] - Modo Administrador";
+  cout << "\n [3] - Sair\n ";
 
   cin >> opcao;
   
-  while ((opcao != "u") && // Melhorar isso aqui porque tá feio demais
-    (opcao != "a") && (opcao != "A") &&
-    (opcao != "s") && (opcao != "S")) {
+  while ((opcao != 1) && (opcao != 2) && (opcao != 3) ) {
     
     cout << "\nOpção inválida!!\nFavor, selecione novamente: ";
     cin >> opcao;
   }
 
   // SAIR DO PROGRAMA
-  if ((opcao == "s") || (opcao == "S")) {
+  if (opcao == 3) {
     system("exit");
   }
 
   // MENU USUÁRIO
-  if ((opcao == "u") || (opcao == "U")) {
-    system("clear||cls");
+  if (opcao == 1) {
     exibirProdutos();
   }
 
   // MENU ADMINISTRADOR
-  if ((opcao == "a") || (opcao == "A")) {
+  if (opcao == 2) {
     system("clear||cls");
 
     string senha;
@@ -176,6 +176,7 @@ void operacaoPagamento(int codigo, int quantidade) {
   cout << "\n=================================================" << endl;  
 
   float valorTotal = estoque[codigo].preco * quantidade;
+
   int metodoPagamento, verificacao;
 
   // Informações sobre o item e valor a ser pago
@@ -222,7 +223,7 @@ void operacaoPagamento(int codigo, int quantidade) {
 
     int opcaoCartao;
 
-    cout << "\nPor favor, aperte: ";
+    cout << "\nPor favor, selecione: ";
     cout << "\n (1) - Débito ";
     cout << "\n (2) - Crédito" << endl;
     cin >> opcaoCartao;
@@ -269,7 +270,7 @@ void painelAdministrador() {
 
   system("clear||cls");
 
-  int opcaoMenuADM;
+  int opcaoMenuADM = 0;
 
   cout << "\n     PAINEL DE CONTROLE - ADMINISTRADOR          ";
   cout << "\n===================================================\n";
@@ -280,7 +281,8 @@ void painelAdministrador() {
   cout << "\n [4] - <<== Voltar ao menu inicial\n";
   cin >> opcaoMenuADM;
 
-  while ((opcaoMenuADM != 1) && (opcaoMenuADM != 2) && (opcaoMenuADM != 3) && (opcaoMenuADM != 4)) {
+  while ((opcaoMenuADM != 1) && (opcaoMenuADM != 2) && (opcaoMenuADM != 3) &&
+         (opcaoMenuADM != 4)) {
     cout << "\nOpção inválida!!";
     cout << "\nPor favor, verifique e escolha novamente: " << endl;
     cin >> opcaoMenuADM;
@@ -288,64 +290,149 @@ void painelAdministrador() {
 
   if (opcaoMenuADM == 4) {
     menuPrincipal();
-  }
-  else {
+  } else {
 
     if (opcaoMenuADM == 1) {
       editarEstoque();
     }
-    
+
     if (opcaoMenuADM == 2) {
       gerarInventario();
     }
 
-    if (opcaoMenuADM == 1) {
-      editarEstoque();
+    if (opcaoMenuADM == 3) {
+      gerarFaturamento();
     }
-
   }
-
 }
 
-void editarEstoque(){
+void editarEstoque() {
 
   system("clear||cls");
 
-  int opcaoEstoque, codigo;
+  int codigo, itemAlteracao;
 
   cout << "\n     PAINEL DE CONTROLE - ESTOQUE          ";
-  cout << "\n===================================================\n";
+  cout << "\n===================================================\n"; 
 
   for (int i = 0; i < 5; i++) {
-    cout << "\nCódigo: " << i + 1; 
+    cout << "\nCódigo: " << i + 1;
     cout << "\nItem: " << estoque[i].nome;
     cout << "\n---------------------------------------------" << endl;
-    
   }
 
   cout << "\nInforme o código do produto a ser alterado: ";
-  cin >> codigo;
+  cin >> codigo;  
 
   codigo = codigo - 1;
 
+  cout << "\nALTERACAÇÃO DE CADASTRO: " << estoque[codigo].nome;
+  cout << "\n---------------------------------------------";
+  cout << "\n [1] - Descrição";
+  cout << "\n [2] - Quantidade";
+  cout << "\n [3] - Preço";
+  cout << "\n\nSelecione o item a ser alterado: " << endl;  
+  cin >> itemAlteracao;
+  
+  efetuarAlteracao(codigo, itemAlteracao);
+
 }
 
-void gerarInventario () {
+void gerarInventario() {
 
   system("clear||cls");
 
   int verificacao;
 
   for (int i = 0; i < 5; i++) {
-    cout << "\nCódigo: " << i + 1; 
     cout << "\nItem: " << estoque[i].nome;
+    cout << "\nCódigo: " << i + 1;
     cout << "\nQuantidade em estoque: " << estoque[i].quantidade;
     cout << "\n---------------------------------------------" << endl;
-    
   }
 
   cout << "\n\nPara voltar ao painel de controle, aperte [1] ";
   cin >> verificacao;
+
+  painelAdministrador();
+
+}
+
+void gerarFaturamento() {
+
+  system("clear||cls"); 
+
+  int verificacao;
+  float faturamentoTotal = 0, previsaoTotal = 0;
+
+  cout << "\n             FATURAMENTO POR PRODUTO            ";
+
+  for (int i = 0; i < 5; i++) {
+    cout << "\n================================================";
+    cout << "\nProduto: " << estoque[i].nome;
+    cout << "\nFaturamento parcial (até o momento): R$ " << setprecision(3) << estoque[i].totalVendido;
+    cout << "\nFaturamento futuro: R$ " << setprecision(3) << estoque[i].preco * estoque[i].quantidade;
+
+    faturamentoTotal += estoque[i].totalVendido;
+    previsaoTotal += (estoque[i].preco * estoque[i].quantidade);
+    
+  }
+
+  cout << "\n\n\n                FATURAMENTO GERAL               ";
+  cout << "\n================================================";
+  cout << "\nFaturamento total até o momento: R$ " << setprecision(3) << faturamentoTotal;
+  cout << "\nPrevisão de faturamento total futuro: R$ " << setprecision(3) << previsaoTotal;
+
+  cout << "\n\nPara voltar ao painel de controle, aperte [1] ";
+  cin >> verificacao;
+
+  painelAdministrador();
+  
+}
+
+void efetuarAlteracao(int codigoProduto, int itemAlteracao) {
+
+  system("clear||cls");
+
+  string novaDescricao;
+  int novaQuantidade;
+  float novoPreco;
+
+  cout << "\nAlterando: " << estoque[codigoProduto].nome;
+
+  switch (itemAlteracao) {
+    case 1:
+      cout << "\nDescrição atual do produto: " << estoque[codigoProduto].nome;
+      cout << "\nDigite a nova descrição: ";
+      cin >> novaDescricao;
+
+      estoque[codigoProduto].nome = novaDescricao;
+    break;
+    
+    case 2:
+      cout << "\nQuantidade atual do produto: " << estoque[codigoProduto].quantidade;
+      cout << "\nDigite a nova quantidade: ";
+      cin >> novaQuantidade;
+
+      estoque[codigoProduto].quantidade = novaQuantidade;
+    break;
+
+    case 3:
+      cout << "\nPreço atual do produto: R$ " << estoque[codigoProduto].preco;
+      cout << "\nDigite o novo preço: ";
+      cin >> novoPreco;
+
+      estoque[codigoProduto].preco = novoPreco;
+    break;
+
+  }
+
+  cout << "\nO item foi alterado com sucesso!!";
+  cout << "\nRetornando ao painel de controle...";
+
+  int  a,b;
+  for(a=0; a<60500; a++)
+  for(b=0; b<6000; b++);
 
   painelAdministrador();
 
