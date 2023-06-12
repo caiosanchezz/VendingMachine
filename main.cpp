@@ -43,8 +43,8 @@ void menuPrincipal() {
 
   int opcao;
 
-  cout << "\n         Vending Machine             ";
-  cout << "\n=====================================";
+  cout << "\n           Vending Machine             ";
+  cout << "\n=======================================";
   cout << "\nComo deseja acessar?\n";
   cout << "\n [1] - Modo Usuário";
   cout << "\n [2] - Modo Administrador";
@@ -76,7 +76,7 @@ void menuPrincipal() {
     
     cout << "          ADMINISTRADOR        ";
     cout << "\n================================================";
-    cout << "\nPara acessar a interface de administração,\nfavor insira a senha: ";
+    cout << "\nPara acessar a interface de administração,\nfavor insira a senha: (senha123)";
     cin >> senha;
 
     while (senha != "senha123") {
@@ -93,7 +93,7 @@ void menuPrincipal() {
 void gerarEstoque() {
 
   estoque[0].codigo = 0;
-  estoque[0].nome = "Batata";
+  estoque[0].nome = "Batata chips";
   estoque[0].preco = 4.50;
   estoque[0].quantidade = 15;
   estoque[0].totalVendido = 0;
@@ -111,7 +111,7 @@ void gerarEstoque() {
   estoque[2].totalVendido = 0;
 
   estoque[3].codigo = 3;
-  estoque[3].nome = "Água";
+  estoque[3].nome = "Água com gás";
   estoque[3].preco = 5.90;
   estoque[3].quantidade = 25;
   estoque[3].totalVendido = 0;
@@ -201,19 +201,19 @@ void operacaoPagamento(int codigo, int quantidade) {
 
     int valorInserido, adicionalInserido, troco;
 
-    cout << "\nInsira o dinheiro: "; // Mudar isso aqui depois pq tá feio
+    cout << "\nInsira o dinheiro: "; 
     cin >> valorInserido;
 
     while (valorInserido < valorTotal)
     {
-      cout << "\nQuantia insuficiente, favor insira mais dinheiro: "; // Arrumar depois
+      cout << "\nQuantia insuficiente, favor insira mais dinheiro: ";
       cin >> adicionalInserido;
       valorInserido += adicionalInserido;
     }
 
     troco = valorInserido - valorTotal;
 
-    cout << "\nTotal inserido: " << valorInserido;
+    cout << "\nQuantia total inserida: " << valorInserido;
     cout << "\nTroco : " <<  setprecision(3) << troco;
 
     cout << "\nMuito obrigado :)" << endl;
@@ -229,11 +229,11 @@ void operacaoPagamento(int codigo, int quantidade) {
     cin >> opcaoCartao;
 
     while ((opcaoCartao != 1) && (opcaoCartao != 2)) {
-      cout << "Caraio viu";
+      cout << "Opção não corresponde com as disponíveis\nFavor, selecione novamente: ";
       cin >> opcaoCartao;
     }
 
-    cout << "\nAproxime o cartão da tela :)";
+    cout << "\nAproxime o cartão da tela";
     cout << "\nMuito Obrigado :)" << endl;
   }
 
